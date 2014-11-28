@@ -9,10 +9,11 @@ package com.buttercoin.bitcointoolbox;
 /**
  * @author Matthis
  */
-public class MainFrame extends CenteredFrame {
+public class Main {
 
-  public MainFrame () {
-    center();
+  public static void main (String[] args) {
+    MainFrame mainFrame = new MainFrame();
+    mainFrame.setVisible(true);
   }
 
 }
