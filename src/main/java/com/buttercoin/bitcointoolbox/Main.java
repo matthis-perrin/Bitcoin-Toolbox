@@ -15,6 +15,7 @@ public class Main {
     MainFrame mainFrame = new MainFrame();
     MainFrameController mainFrameController = new MainFrameController(mainFrame);
     mainFrame.setController(mainFrameController);
+    mainFrameController.randomize();
 
     mainFrame.setVisible(true);
   }

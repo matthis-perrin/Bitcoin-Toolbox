@@ -24,12 +24,19 @@ public class MainFrameController {
     this.view = view;
   }
 
+  public void randomize () {
+    String key = new ECKey().getPrivateKeyEncoded(MainNetParams.get()).toString();
+    view.updatePrivateKey(key);
+    privateKeyChanged(key);
+  }
+
   public void addressChanged (String newAddress) {
     address = newAddress;
     ECKey key = ECKeyStore.keys.get(address);
     privateKey = key == null ? "" : key.getPrivateKeyEncoded(MainNetParams.get()).toString();
     view.updatePrivateKey(privateKey);
   }
+
   public void privateKeyChanged (String newPrivateKey) {
     privateKey = newPrivateKey;
     try {
