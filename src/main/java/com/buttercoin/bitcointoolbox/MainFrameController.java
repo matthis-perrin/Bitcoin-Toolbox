@@ -26,13 +26,16 @@ public class MainFrameController {
 
   public void addressChanged (String newAddress) {
     address = newAddress;
-    privateKey = "";
+    ECKey key = ECKeyStore.keys.get(address);
+    privateKey = key == null ? "" : key.getPrivateKeyEncoded(MainNetParams.get()).toString();
     view.updatePrivateKey(privateKey);
   }
   public void privateKeyChanged (String newPrivateKey) {
     privateKey = newPrivateKey;
     try {
-      address = ECKey.fromPrivate(Base58.decodeChecked(privateKey)).toAddress(MainNetParams.get()).toString();
+      ECKey ecKey = ECKey.fromPrivate(Base58.decodeChecked(privateKey));
+      address = ecKey.toAddress(MainNetParams.get()).toString();
+      ECKeyStore.keys.put(address, ecKey);
       view.updateAddress(address);
     } catch (Exception e) {
       System.out.println("Invalid private key");
