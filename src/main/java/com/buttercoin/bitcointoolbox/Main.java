@@ -13,6 +13,9 @@ public class Main {
 
   public static void main (String[] args) {
     MainFrame mainFrame = new MainFrame();
+    MainFrameController mainFrameController = new MainFrameController(mainFrame);
+    mainFrame.setController(mainFrameController);
+
     mainFrame.setVisible(true);
   }
 
