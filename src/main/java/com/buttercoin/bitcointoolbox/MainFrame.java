@@ -8,26 +8,33 @@ package com.buttercoin.bitcointoolbox;
 
 import com.buttercoin.bitcointoolbox.panels.KeyConversionController;
 import com.buttercoin.bitcointoolbox.panels.KeyConversionPanel;
+import java.awt.event.KeyEvent;
+import javax.swing.JTabbedPane;
 
 /**
  * @author Matthis
  */
 public class MainFrame extends CenteredFrame {
 
-  private KeyConversionPanel keyConversionPanel;
-
   public MainFrame () {
-    // Key Conversion
-    keyConversionPanel = new KeyConversionPanel();
+
+    // Key Conversion Tab
+    KeyConversionPanel keyConversionPanel = new KeyConversionPanel();
     KeyConversionController keyConversionController = new KeyConversionController(keyConversionPanel);
     keyConversionPanel.setController(keyConversionController);
     keyConversionController.randomize();
 
-    setContentPane(keyConversionPanel);
+    // Tabs
+    JTabbedPane tabbedPane = new JTabbedPane();
+    tabbedPane.add("Key Conversion", keyConversionPanel);
+    tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-    pack();
-    center();
+    setContentPane(tabbedPane);
+
+    // Frame related
+    setSize(700, 400);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
+    center();
   }
 
 }

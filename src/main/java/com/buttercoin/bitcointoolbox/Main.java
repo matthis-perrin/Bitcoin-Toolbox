@@ -11,6 +11,7 @@ package com.buttercoin.bitcointoolbox;
  */
 public class Main {
 
+  // Just here to start the main frame
   public static void main (String[] args) {
     MainFrame mainFrame = new MainFrame();
     mainFrame.setVisible(true);
