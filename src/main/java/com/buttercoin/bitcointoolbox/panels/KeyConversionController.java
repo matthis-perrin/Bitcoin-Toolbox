@@ -4,8 +4,9 @@
  *  Copyright (c) 2014 Buttercoin
  */
 
-package com.buttercoin.bitcointoolbox;
+package com.buttercoin.bitcointoolbox.panels;
 
+import com.buttercoin.bitcointoolbox.ECKeyStore;
 import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.params.MainNetParams;
@@ -13,14 +14,14 @@ import org.bitcoinj.params.MainNetParams;
 /**
  * @author Matthis
  */
-public class MainFrameController {
+public class KeyConversionController {
 
   private String privateKey = "";
   private String address = "";
 
-  private final MainFrame view;
+  private final KeyConversionPanel view;
 
-  public MainFrameController (MainFrame view) {
+  public KeyConversionController (KeyConversionPanel view) {
     this.view = view;
   }
 
