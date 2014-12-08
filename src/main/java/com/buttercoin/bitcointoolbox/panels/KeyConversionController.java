@@ -9,6 +9,7 @@ package com.buttercoin.bitcointoolbox.panels;
 import com.buttercoin.bitcointoolbox.ECKeyStore;
 import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.Utils;
 import org.bitcoinj.params.MainNetParams;
 
 /**
@@ -18,6 +19,7 @@ public class KeyConversionController {
 
   private String privateKey = "";
   private String address = "";
+  private String publicKey = "";
 
   private final KeyConversionPanel view;
 
@@ -31,23 +33,37 @@ public class KeyConversionController {
     privateKeyChanged(key);
   }
 
-  public void addressChanged (String newAddress) {
-    address = newAddress;
-    ECKey key = ECKeyStore.keys.get(address);
-    privateKey = key == null ? "" : key.getPrivateKeyEncoded(MainNetParams.get()).toString();
-    view.updatePrivateKey(privateKey);
-  }
-
   public void privateKeyChanged (String newPrivateKey) {
     privateKey = newPrivateKey;
     try {
       ECKey ecKey = ECKey.fromPrivate(Base58.decodeChecked(privateKey));
       address = ecKey.toAddress(MainNetParams.get()).toString();
-      ECKeyStore.keys.put(address, ecKey);
+      publicKey = Utils.HEX.encode(ecKey.getPubKey());
+      ECKeyStore.addresses.put(address, ecKey);
+      ECKeyStore.publicKeys.put(publicKey, ecKey);
       view.updateAddress(address);
+      view.updatePublicKey(publicKey);
     } catch (Exception e) {
       System.out.println("Invalid private key");
     }
+  }
+
+  public void addressChanged (String newAddress) {
+    address = newAddress;
+    ECKey key = ECKeyStore.addresses.get(address);
+    privateKey = key == null ? "" : key.getPrivateKeyEncoded(MainNetParams.get()).toString();
+    publicKey = key == null ? "" : Utils.HEX.encode(key.getPubKey());
+    view.updatePrivateKey(privateKey);
+    view.updatePublicKey(publicKey);
+  }
+
+  public void publicKeyChanged (String newPublicKey) {
+    publicKey = newPublicKey;
+    ECKey key = ECKeyStore.publicKeys.get(publicKey);
+    privateKey = key == null ? "" : key.getPrivateKeyEncoded(MainNetParams.get()).toString();
+    address = key == null ? "" : key.toAddress(MainNetParams.get()).toString();
+    view.updatePrivateKey(privateKey);
+    view.updateAddress(address);
   }
 
 }

@@ -14,7 +14,8 @@ import org.bitcoinj.core.ECKey;
  * @author Matthis Perrin <matthis.perrin at gmail.com>
  */
 public class ECKeyStore {
-  
-  public static final HashMap<String, ECKey> keys = new HashMap<>();
-  
+
+  public static final HashMap<String, ECKey> addresses = new HashMap<>();
+  public static final HashMap<String, ECKey> publicKeys = new HashMap<>();
+
 }

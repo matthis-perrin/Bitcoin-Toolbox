@@ -23,11 +23,14 @@ public class KeyConversionPanel extends JPanel {
 
   private KeyConversionController controller;
 
+  private final JLabel privateKeyLabel = new JLabel("Private Key");
+  private final JTextField privateKeyField = new JTextField();
+
   private final JLabel addressLabel = new JLabel("Address");
   private final JTextField addressTextField = new JTextField();
 
-  private final JLabel privateKeyLabel = new JLabel("Private Key");
-  private final JTextField privateKeyField = new JTextField();
+  private final JLabel publicKeyLabel = new JLabel("Public Key");
+  private final JTextField publicKeyTextField = new JTextField();
 
   private boolean preventEvents = false;
 
@@ -43,7 +46,7 @@ public class KeyConversionPanel extends JPanel {
 
     Insets leftInsets = new Insets(0, 20, 0, 10);
     Insets rightInsets = new Insets(0, 10, 0, 20);
-    Dimension fieldSize = new Dimension(500, 30);
+    Dimension fieldSize = new Dimension(600, 30);
 
     // Private Key
     c.gridx = 0;
@@ -66,6 +69,17 @@ public class KeyConversionPanel extends JPanel {
     c.insets = rightInsets;
     addressTextField.setPreferredSize(fieldSize);
     add(addressTextField, c);
+
+    // Public Key
+    c.gridx = 0;
+    c.gridy++;
+    c.insets = leftInsets;
+    add(publicKeyLabel, c);
+
+    c.gridx++;
+    c.insets = rightInsets;
+    publicKeyTextField.setPreferredSize(fieldSize);
+    add(publicKeyTextField, c);
   }
 
   private void initElements () {
@@ -102,7 +116,18 @@ public class KeyConversionPanel extends JPanel {
       controller.addressChanged(addressTextField.getText());
     }
   }
-  
+
+  public void updatePublicKey (String newPublicKey) {
+    preventEvents = true;
+    publicKeyTextField.setText(newPublicKey);
+    preventEvents = false;
+  }
+  private void publicKeyChanged () {
+    if (controller != null && !preventEvents) {
+      controller.publicKeyChanged(publicKeyTextField.getText());
+    }
+  }
+
   public void setController (KeyConversionController controller) {
     this.controller = controller;
   }
