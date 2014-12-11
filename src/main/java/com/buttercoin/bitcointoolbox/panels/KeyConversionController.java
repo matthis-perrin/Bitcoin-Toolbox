@@ -18,8 +18,9 @@ import org.bitcoinj.params.MainNetParams;
 public class KeyConversionController {
 
   private String privateKey = "";
-  private String compressedPrivateKey = "";
+  private String uncompressedPrivateKey = "";
   private String address = "";
+  private String uncompressedAddress = "";
   private String publicKey = "";
 
   private final KeyConversionPanel view;
@@ -29,35 +30,56 @@ public class KeyConversionController {
   }
 
   public void randomize () {
-    String key = new ECKey().getPrivateKeyEncoded(MainNetParams.get()).toString();
-    view.updatePrivateKey(key);
-    privateKeyChanged(key);
+    updateModel(new ECKey());
+  }
+
+  private void updateModel (ECKey key) {
+    ECKey uncompressedKey = key.decompress();
+    ECKeyStore.register(key);
+
+    privateKey = key.getPrivateKeyEncoded(MainNetParams.get()).toString();
+    uncompressedPrivateKey = uncompressedKey.getPrivateKeyEncoded(MainNetParams.get()).toString();
+    address = key.toAddress(MainNetParams.get()).toString();
+    uncompressedAddress = uncompressedKey.toAddress(MainNetParams.get()).toString();
+    publicKey = Utils.HEX.encode(key.getPubKey());
+
+    view.updatePrivateKey(privateKey);
+    view.updateUncompressedPrivateKey(uncompressedPrivateKey);
+    view.updateAddress(address);
+    view.updateUncompressedAddress(uncompressedAddress);
+    view.updatePublicKey(publicKey);
   }
 
   public void privateKeyChanged (String newPrivateKey) {
-    privateKey = newPrivateKey;
     try {
-      ECKey ecKey = ECKey.fromPrivate(Base58.decodeChecked(privateKey));
-      address = ecKey.toAddress(MainNetParams.get()).toString();
-      publicKey = Utils.HEX.encode(ecKey.getPubKey());
-      compressedPrivateKey = ecKey.decompress().getPrivateKeyEncoded(MainNetParams.get()).toString();
-      ECKeyStore.addresses.put(address, ecKey);
-      ECKeyStore.publicKeys.put(publicKey, ecKey);
-      view.updateAddress(address);
-      view.updatePublicKey(publicKey);
-      view.updateCompressedPrivateKey(compressedPrivateKey);
+      ECKey ecKey = ECKey.fromPrivate(Base58.decodeChecked(privateKey), true);
+      updateModel(ecKey);
     } catch (Exception e) {
       System.out.println("Invalid private key");
     }
   }
 
-  public void compressedPrivateKeyChanged (String newCompressedPrivateKey) {
-    compressedPrivateKey = newCompressedPrivateKey;
+  public void uncompressedPrivateKeyChanged (String newUncompressedPrivateKey) {
+    try {
+      ECKey ecKey = ECKey.fromPrivate(Base58.decodeChecked(privateKey), false);
+      updateModel(ecKey);
+    } catch (Exception e) {
+      System.out.println("Invalid private key");
+    }
   }
 
   public void addressChanged (String newAddress) {
     address = newAddress;
     ECKey key = ECKeyStore.addresses.get(address);
+    privateKey = key == null ? "" : key.getPrivateKeyEncoded(MainNetParams.get()).toString();
+    publicKey = key == null ? "" : Utils.HEX.encode(key.getPubKey());
+    view.updatePrivateKey(privateKey);
+    view.updatePublicKey(publicKey);
+  }
+
+  public void uncompressedAddressChanged (String newUncompressedAddress) {
+    uncompressedAddress = newUncompressedAddress;
+    ECKey key = ECKeyStore.uncompressedAddresses.get(address);
     privateKey = key == null ? "" : key.getPrivateKeyEncoded(MainNetParams.get()).toString();
     publicKey = key == null ? "" : Utils.HEX.encode(key.getPubKey());
     view.updatePrivateKey(privateKey);
