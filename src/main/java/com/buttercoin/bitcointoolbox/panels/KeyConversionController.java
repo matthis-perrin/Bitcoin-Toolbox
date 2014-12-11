@@ -18,6 +18,7 @@ import org.bitcoinj.params.MainNetParams;
 public class KeyConversionController {
 
   private String privateKey = "";
+  private String compressedPrivateKey = "";
   private String address = "";
   private String publicKey = "";
 
@@ -39,13 +40,19 @@ public class KeyConversionController {
       ECKey ecKey = ECKey.fromPrivate(Base58.decodeChecked(privateKey));
       address = ecKey.toAddress(MainNetParams.get()).toString();
       publicKey = Utils.HEX.encode(ecKey.getPubKey());
+      compressedPrivateKey = ecKey.decompress().getPrivateKeyEncoded(MainNetParams.get()).toString();
       ECKeyStore.addresses.put(address, ecKey);
       ECKeyStore.publicKeys.put(publicKey, ecKey);
       view.updateAddress(address);
       view.updatePublicKey(publicKey);
+      view.updateCompressedPrivateKey(compressedPrivateKey);
     } catch (Exception e) {
       System.out.println("Invalid private key");
     }
+  }
+
+  public void compressedPrivateKeyChanged (String newCompressedPrivateKey) {
+    compressedPrivateKey = newCompressedPrivateKey;
   }
 
   public void addressChanged (String newAddress) {

@@ -32,7 +32,7 @@ public class MainFrame extends CenteredFrame {
     setContentPane(tabbedPane);
 
     // Frame related
-    setSize(750, 400);
+    setSize(850, 400);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     center();
   }

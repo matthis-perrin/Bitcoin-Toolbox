@@ -26,6 +26,9 @@ public class KeyConversionPanel extends JPanel {
   private final JLabel privateKeyLabel = new JLabel("Private Key");
   private final JTextField privateKeyField = new JTextField();
 
+  private final JLabel compressedPrivateKeyLabel = new JLabel("Compressed Private Key");
+  private final JTextField compressedPrivateKeyField = new JTextField();
+
   private final JLabel addressLabel = new JLabel("Address");
   private final JTextField addressTextField = new JTextField();
 
@@ -58,6 +61,17 @@ public class KeyConversionPanel extends JPanel {
     c.insets = rightInsets;
     privateKeyField.setPreferredSize(fieldSize);
     add(privateKeyField, c);
+
+    // Compressed Private Key
+    c.gridx = 0;
+    c.gridy++;
+    c.insets = leftInsets;
+    add(compressedPrivateKeyLabel, c);
+
+    c.gridx++;
+    c.insets = rightInsets;
+    compressedPrivateKeyField.setPreferredSize(fieldSize);
+    add(compressedPrivateKeyField, c);
 
     // Address
     c.gridx = 0;
@@ -103,6 +117,17 @@ public class KeyConversionPanel extends JPanel {
   private void privateKeyChanged () {
     if (controller != null && !preventEvents) {
       controller.privateKeyChanged(privateKeyField.getText());
+    }
+  }
+
+  public void updateCompressedPrivateKey (String newCompressedPrivateKey) {
+    preventEvents = true;
+    compressedPrivateKeyField.setText(newCompressedPrivateKey);
+    preventEvents = false;
+  }
+  private void compressedPrivateKeyChanged () {
+    if (controller != null && !preventEvents) {
+      controller.compressedPrivateKeyChanged(compressedPrivateKeyField.getText());
     }
   }
 
