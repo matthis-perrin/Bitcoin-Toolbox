@@ -34,14 +34,15 @@ public class KeyConversionController {
   }
 
   private void updateModel (ECKey key) {
-    ECKey uncompressedKey = key.decompress();
-    ECKeyStore.register(key);
+    ECKey compressedKey = ECKey.fromPrivate(key.getPrivKey(), true);
+    ECKey uncompressedKey = ECKey.fromPrivate(key.getPrivKey(), false);
+    ECKeyStore.register(compressedKey);
 
-    privateKey = key.getPrivateKeyEncoded(MainNetParams.get()).toString();
+    privateKey = compressedKey.getPrivateKeyEncoded(MainNetParams.get()).toString();
     uncompressedPrivateKey = uncompressedKey.getPrivateKeyEncoded(MainNetParams.get()).toString();
-    address = key.toAddress(MainNetParams.get()).toString();
+    address = compressedKey.toAddress(MainNetParams.get()).toString();
     uncompressedAddress = uncompressedKey.toAddress(MainNetParams.get()).toString();
-    publicKey = Utils.HEX.encode(key.getPubKey());
+    publicKey = Utils.HEX.encode(compressedKey.getPubKey());
 
     view.updatePrivateKey(privateKey);
     view.updateUncompressedPrivateKey(uncompressedPrivateKey);
@@ -55,7 +56,7 @@ public class KeyConversionController {
       ECKey ecKey = ECKey.fromPrivate(Base58.decodeChecked(privateKey), true);
       updateModel(ecKey);
     } catch (Exception e) {
-      System.out.println("Invalid private key");
+      System.out.println("Invalid compressed private key");
     }
   }
 
@@ -64,7 +65,7 @@ public class KeyConversionController {
       ECKey ecKey = ECKey.fromPrivate(Base58.decodeChecked(privateKey), false);
       updateModel(ecKey);
     } catch (Exception e) {
-      System.out.println("Invalid private key");
+      System.out.println("Invalid uncompressed private key");
     }
   }
 

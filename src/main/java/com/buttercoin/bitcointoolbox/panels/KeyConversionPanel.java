@@ -13,6 +13,7 @@ import java.awt.Insets;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -159,54 +160,49 @@ public class KeyConversionPanel extends JPanel {
 
   }
 
+  private void updateTextFieldWithValue (final JTextField textField, final String value) {
+    SwingUtilities.invokeLater(new Runnable() { @Override public void run() {
+      preventEvents = true;
+      textField.setText(value);
+      preventEvents = false;
+    }});
+  }
+
   public void updatePrivateKey (String newPrivateKey) {
-    preventEvents = true;
-    privateKeyField.setText(newPrivateKey);
-    preventEvents = false;
+    updateTextFieldWithValue(privateKeyField, newPrivateKey);
+  }
+  public void updateUncompressedPrivateKey (String newUncompressedPrivateKey) {
+    updateTextFieldWithValue(uncompressedPrivateKeyField, newUncompressedPrivateKey);
+  }
+  public void updateAddress (String newAddress) {
+    updateTextFieldWithValue(addressTextField, newAddress);
+  }
+  public void updateUncompressedAddress (String newUncompressedAddress) {
+    updateTextFieldWithValue(uncompressedAddressTextField, newUncompressedAddress);
+  }
+  public void updatePublicKey (String newPublicKey) {
+    updateTextFieldWithValue(publicKeyTextField, newPublicKey);
+  }
+
+  private void uncompressedPrivateKeyChanged () {
+    if (controller != null && !preventEvents) {
+      controller.uncompressedPrivateKeyChanged(uncompressedPrivateKeyField.getText());
+    }
   }
   private void privateKeyChanged () {
     if (controller != null && !preventEvents) {
       controller.privateKeyChanged(privateKeyField.getText());
     }
   }
-
-  public void updateUncompressedPrivateKey (String newUncompressedPrivateKey) {
-    preventEvents = true;
-    uncompressedPrivateKeyField.setText(newUncompressedPrivateKey);
-    preventEvents = false;
-  }
-  private void uncompressedPrivateKeyChanged () {
-    if (controller != null && !preventEvents) {
-      controller.uncompressedPrivateKeyChanged(uncompressedPrivateKeyField.getText());
-    }
-  }
-
-  public void updateAddress (String newAddress) {
-    preventEvents = true;
-    addressTextField.setText(newAddress);
-    preventEvents = false;
-  }
   private void addressChanged () {
     if (controller != null && !preventEvents) {
       controller.addressChanged(addressTextField.getText());
     }
   }
-
-  public void updateUncompressedAddress (String newUncompressedAddress) {
-    preventEvents = true;
-    uncompressedAddressTextField.setText(newUncompressedAddress);
-    preventEvents = false;
-  }
   private void uncompressedAddressChanged () {
     if (controller != null && !preventEvents) {
       controller.uncompressedAddressChanged(uncompressedAddressTextField.getText());
     }
-  }
-
-  public void updatePublicKey (String newPublicKey) {
-    preventEvents = true;
-    publicKeyTextField.setText(newPublicKey);
-    preventEvents = false;
   }
   private void publicKeyChanged () {
     if (controller != null && !preventEvents) {
