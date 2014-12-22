@@ -22,6 +22,7 @@ public class ECKeyStore {
   public static final HashMap<String, ECKey> publicKeys = new HashMap<>();
 
   public static void register (ECKey key) {
+    // TODO - Do not erase a full ECKey with public only ECKey
     addresses.put(key.toAddress(MainNetParams.get()).toString(), key);
     uncompressedAddresses.put(key.decompress().toAddress(MainNetParams.get()).toString(), key);
     publicKeys.put(Utils.HEX.encode(key.getPubKey()), key);

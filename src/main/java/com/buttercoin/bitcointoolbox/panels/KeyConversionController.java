@@ -17,12 +17,6 @@ import org.bitcoinj.params.MainNetParams;
  */
 public class KeyConversionController {
 
-  private String privateKey = "";
-  private String uncompressedPrivateKey = "";
-  private String address = "";
-  private String uncompressedAddress = "";
-  private String publicKey = "";
-
   private final KeyConversionPanel view;
 
   public KeyConversionController (KeyConversionPanel view) {
@@ -38,14 +32,19 @@ public class KeyConversionController {
     ECKey uncompressedKey = ECKey.fromPrivate(key.getPrivKey(), false);
     ECKeyStore.register(compressedKey);
 
-    privateKey = compressedKey.getPrivateKeyEncoded(MainNetParams.get()).toString();
-    uncompressedPrivateKey = uncompressedKey.getPrivateKeyEncoded(MainNetParams.get()).toString();
-    address = compressedKey.toAddress(MainNetParams.get()).toString();
-    uncompressedAddress = uncompressedKey.toAddress(MainNetParams.get()).toString();
-    publicKey = Utils.HEX.encode(compressedKey.getPubKey());
+    if (!compressedKey.isPubKeyOnly()) {
+      String privateKey = compressedKey.getPrivateKeyEncoded(MainNetParams.get()).toString();
+      String uncompressedPrivateKey = uncompressedKey.getPrivateKeyEncoded(MainNetParams.get()).toString();
+      view.updatePrivateKey(privateKey);
+      view.updateUncompressedPrivateKey(uncompressedPrivateKey);
+    } else {
+      view.updatePrivateKey("");
+      view.updateUncompressedPrivateKey("");
+    }
 
-    view.updatePrivateKey(privateKey);
-    view.updateUncompressedPrivateKey(uncompressedPrivateKey);
+    String address = compressedKey.toAddress(MainNetParams.get()).toString();
+    String uncompressedAddress = uncompressedKey.toAddress(MainNetParams.get()).toString();
+    String publicKey = Utils.HEX.encode(compressedKey.getPubKey());
     view.updateAddress(address);
     view.updateUncompressedAddress(uncompressedAddress);
     view.updatePublicKey(publicKey);
@@ -53,8 +52,7 @@ public class KeyConversionController {
 
   public void privateKeyChanged (String newPrivateKey) {
     try {
-      ECKey ecKey = ECKey.fromPrivate(Base58.decodeChecked(privateKey), true);
-      updateModel(ecKey);
+      updateModel(ECKey.fromPrivate(Base58.decodeChecked(newPrivateKey), true));
     } catch (Exception e) {
       System.out.println("Invalid compressed private key");
     }
@@ -62,38 +60,37 @@ public class KeyConversionController {
 
   public void uncompressedPrivateKeyChanged (String newUncompressedPrivateKey) {
     try {
-      ECKey ecKey = ECKey.fromPrivate(Base58.decodeChecked(privateKey), false);
-      updateModel(ecKey);
+      updateModel(ECKey.fromPrivate(Base58.decodeChecked(newUncompressedPrivateKey), false));
     } catch (Exception e) {
       System.out.println("Invalid uncompressed private key");
     }
   }
 
   public void addressChanged (String newAddress) {
-    address = newAddress;
-    ECKey key = ECKeyStore.addresses.get(address);
-    privateKey = key == null ? "" : key.getPrivateKeyEncoded(MainNetParams.get()).toString();
-    publicKey = key == null ? "" : Utils.HEX.encode(key.getPubKey());
-    view.updatePrivateKey(privateKey);
-    view.updatePublicKey(publicKey);
+    ECKey key = ECKeyStore.addresses.get(newAddress);
+    if (key == null) {
+      // Do something smart
+    } else {
+      updateModel(key);
+    }
   }
 
   public void uncompressedAddressChanged (String newUncompressedAddress) {
-    uncompressedAddress = newUncompressedAddress;
-    ECKey key = ECKeyStore.uncompressedAddresses.get(address);
-    privateKey = key == null ? "" : key.getPrivateKeyEncoded(MainNetParams.get()).toString();
-    publicKey = key == null ? "" : Utils.HEX.encode(key.getPubKey());
-    view.updatePrivateKey(privateKey);
-    view.updatePublicKey(publicKey);
+    ECKey key = ECKeyStore.uncompressedAddresses.get(newUncompressedAddress);
+    if (key == null) {
+      // Do something smart
+    } else {
+      updateModel(key);
+    }
   }
 
   public void publicKeyChanged (String newPublicKey) {
-    publicKey = newPublicKey;
-    ECKey key = ECKeyStore.publicKeys.get(publicKey);
-    privateKey = key == null ? "" : key.getPrivateKeyEncoded(MainNetParams.get()).toString();
-    address = key == null ? "" : key.toAddress(MainNetParams.get()).toString();
-    view.updatePrivateKey(privateKey);
-    view.updateAddress(address);
+    ECKey key = ECKeyStore.publicKeys.get(newPublicKey);
+    if (key == null) {
+      // Do something smart
+    } else {
+      updateModel(key);
+    }
   }
 
 }
