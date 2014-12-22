@@ -49,78 +49,114 @@ public class KeyConversionPanel extends JPanel {
   private void initLayout () {
     setLayout(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();
+    c.fill = GridBagConstraints.HORIZONTAL;
 
     Insets leftInsets = new Insets(0, 20, 0, 10);
     Insets rightInsets = new Insets(0, 10, 0, 20);
-    Dimension fieldSize = new Dimension(600, 30);
 
     // Private Key
     c.gridx = 0;
     c.gridy = 0;
     c.insets = leftInsets;
+    c.weightx = 0;
     add(privateKeyLabel, c);
 
     c.gridx++;
     c.insets = rightInsets;
-    privateKeyField.setPreferredSize(fieldSize);
+    c.weightx = 1;
     add(privateKeyField, c);
 
     // Uncompressed Private Key
     c.gridx = 0;
     c.gridy++;
     c.insets = leftInsets;
+    c.weightx = 0;
     add(uncompressedPrivateKeyLabel, c);
 
     c.gridx++;
     c.insets = rightInsets;
-    uncompressedPrivateKeyField.setPreferredSize(fieldSize);
+    c.weightx = 1;
     add(uncompressedPrivateKeyField, c);
 
     // Address
     c.gridx = 0;
     c.gridy++;
     c.insets = leftInsets;
+    c.weightx = 0;
     add(addressLabel, c);
 
     c.gridx++;
     c.insets = rightInsets;
-    addressTextField.setPreferredSize(fieldSize);
+    c.weightx = 1;
     add(addressTextField, c);
 
     // Uncompressed Address
     c.gridx = 0;
     c.gridy++;
     c.insets = leftInsets;
+    c.weightx = 0;
     add(uncompressedAddressLabel, c);
 
     c.gridx++;
     c.insets = rightInsets;
-    uncompressedAddressTextField.setPreferredSize(fieldSize);
+    c.weightx = 1;
     add(uncompressedAddressTextField, c);
 
     // Public Key
     c.gridx = 0;
     c.gridy++;
     c.insets = leftInsets;
+    c.weightx = 0;
     add(publicKeyLabel, c);
 
     c.gridx++;
     c.insets = rightInsets;
-    publicKeyTextField.setPreferredSize(fieldSize);
+    c.weightx = 1;
     add(publicKeyTextField, c);
   }
 
   private void initElements () {
+
     privateKeyField.getDocument().addDocumentListener(new DocumentListener() {
-      @Override public void insertUpdate(DocumentEvent e) { privateKeyChanged(); }
-      @Override public void removeUpdate(DocumentEvent e) { privateKeyChanged(); }
+      @Override public void insertUpdate (DocumentEvent e) { privateKeyChanged(); }
+      @Override public void removeUpdate (DocumentEvent e) { privateKeyChanged(); }
       @Override public void changedUpdate(DocumentEvent e) { privateKeyChanged(); }
     });
+    uncompressedPrivateKeyField.getDocument().addDocumentListener(new DocumentListener() {
+      @Override public void insertUpdate (DocumentEvent e) { uncompressedPrivateKeyChanged(); }
+      @Override public void removeUpdate (DocumentEvent e) { uncompressedPrivateKeyChanged(); }
+      @Override public void changedUpdate(DocumentEvent e) { uncompressedPrivateKeyChanged(); }
+    });
     addressTextField.getDocument().addDocumentListener(new DocumentListener() {
-      @Override public void insertUpdate(DocumentEvent e) { addressChanged(); }
-      @Override public void removeUpdate(DocumentEvent e) { addressChanged(); }
+      @Override public void insertUpdate (DocumentEvent e) { addressChanged(); }
+      @Override public void removeUpdate (DocumentEvent e) { addressChanged(); }
       @Override public void changedUpdate(DocumentEvent e) { addressChanged(); }
     });
+    uncompressedAddressTextField.getDocument().addDocumentListener(new DocumentListener() {
+      @Override public void insertUpdate (DocumentEvent e) { privateKeyChanged(); }
+      @Override public void removeUpdate (DocumentEvent e) { privateKeyChanged(); }
+      @Override public void changedUpdate(DocumentEvent e) { privateKeyChanged(); }
+    });
+    publicKeyTextField.getDocument().addDocumentListener(new DocumentListener() {
+      @Override public void insertUpdate (DocumentEvent e) { uncompressedAddressChanged(); }
+      @Override public void removeUpdate (DocumentEvent e) { uncompressedAddressChanged(); }
+      @Override public void changedUpdate(DocumentEvent e) { uncompressedAddressChanged(); }
+    });
+
+    JLabel[] labels = new JLabel[] { privateKeyLabel, uncompressedPrivateKeyLabel,
+      addressLabel, uncompressedAddressLabel, publicKeyLabel };
+    JTextField[] textfields = new JTextField[] { privateKeyField, uncompressedPrivateKeyField,
+      addressTextField, uncompressedAddressTextField, publicKeyTextField};
+
+    for (JLabel label : labels) {
+      label.setHorizontalAlignment(JTextField.RIGHT);
+    }
+
+    Dimension fieldSize = new Dimension(0, 35);
+    for (JTextField textfield : textfields) {
+      textfield.setPreferredSize(fieldSize);
+    }
+
   }
 
   public void updatePrivateKey (String newPrivateKey) {
