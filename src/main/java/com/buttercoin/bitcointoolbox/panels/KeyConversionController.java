@@ -7,7 +7,7 @@
 package com.buttercoin.bitcointoolbox.panels;
 
 import com.buttercoin.bitcointoolbox.ECKeyStore;
-import org.bitcoinj.core.Base58;
+import org.bitcoinj.core.DumpedPrivateKey;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Utils;
 import org.bitcoinj.params.MainNetParams;
@@ -28,8 +28,13 @@ public class KeyConversionController {
   }
 
   private void updateModel (ECKey key) {
-    ECKey compressedKey = ECKey.fromPrivate(key.getPrivKey(), true);
-    ECKey uncompressedKey = ECKey.fromPrivate(key.getPrivKey(), false);
+    ECKey compressedKey = key;
+    ECKey uncompressedKey = key;
+    if (key.isCompressed()) {
+      uncompressedKey = ECKey.fromPrivate(key.getPrivKey(), false);
+    } else {
+      compressedKey = ECKey.fromPrivate(key.getPrivKey(), true);
+    }
     ECKeyStore.register(compressedKey);
 
     if (!compressedKey.isPubKeyOnly()) {
@@ -52,7 +57,7 @@ public class KeyConversionController {
 
   public void privateKeyChanged (String newPrivateKey) {
     try {
-      updateModel(ECKey.fromPrivate(Base58.decodeChecked(newPrivateKey), true));
+      updateModel(new DumpedPrivateKey(MainNetParams.get(), newPrivateKey).getKey());
     } catch (Exception e) {
       System.out.println("Invalid compressed private key");
     }
@@ -60,7 +65,7 @@ public class KeyConversionController {
 
   public void uncompressedPrivateKeyChanged (String newUncompressedPrivateKey) {
     try {
-      updateModel(ECKey.fromPrivate(Base58.decodeChecked(newUncompressedPrivateKey), false));
+      updateModel(new DumpedPrivateKey(MainNetParams.get(), newUncompressedPrivateKey).getKey());
     } catch (Exception e) {
       System.out.println("Invalid uncompressed private key");
     }
