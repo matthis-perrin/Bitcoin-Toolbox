@@ -27,7 +27,6 @@ public class SPVChainFileUtils {
   public static void loadSPVChainFile (File chainFile)
           throws BlockStoreException {
     blockStore = new SPVBlockStore(MainNetParams.get(), chainFile);
-
   }
 
   public static StoredBlock getLastBlock ()
