@@ -39,6 +39,9 @@ public class KeyConversionPanel extends JPanel {
   private final JLabel publicKeyLabel = new JLabel("Public Key");
   private final JTextField publicKeyTextField = new JTextField();
 
+  private final JLabel uncompressedPublicKeyLabel = new JLabel("Uncompressed Public Key");
+  private final JTextField uncompressedPublicKeyTextField = new JTextField();
+
   private boolean preventEvents = false;
 
 
@@ -114,6 +117,18 @@ public class KeyConversionPanel extends JPanel {
     c.insets = rightInsets;
     c.weightx = 1;
     add(publicKeyTextField, c);
+
+    // Uncompressed Public Key
+    c.gridx = 0;
+    c.gridy++;
+    c.insets = leftInsets;
+    c.weightx = 0;
+    add(uncompressedPublicKeyLabel, c);
+
+    c.gridx++;
+    c.insets = rightInsets;
+    c.weightx = 1;
+    add(uncompressedPublicKeyTextField, c);
   }
 
   private void initElements () {
@@ -139,15 +154,20 @@ public class KeyConversionPanel extends JPanel {
       @Override public void changedUpdate(DocumentEvent e) { privateKeyChanged(); }
     });
     publicKeyTextField.getDocument().addDocumentListener(new DocumentListener() {
-      @Override public void insertUpdate (DocumentEvent e) { uncompressedAddressChanged(); }
-      @Override public void removeUpdate (DocumentEvent e) { uncompressedAddressChanged(); }
-      @Override public void changedUpdate(DocumentEvent e) { uncompressedAddressChanged(); }
+      @Override public void insertUpdate (DocumentEvent e) { publicKeyChanged(); }
+      @Override public void removeUpdate (DocumentEvent e) { publicKeyChanged(); }
+      @Override public void changedUpdate(DocumentEvent e) { publicKeyChanged(); }
+    });
+    uncompressedPublicKeyTextField.getDocument().addDocumentListener(new DocumentListener() {
+      @Override public void insertUpdate (DocumentEvent e) { uncompressedPublicKeyChanged(); }
+      @Override public void removeUpdate (DocumentEvent e) { uncompressedPublicKeyChanged(); }
+      @Override public void changedUpdate(DocumentEvent e) { uncompressedPublicKeyChanged(); }
     });
 
     JLabel[] labels = new JLabel[] { privateKeyLabel, uncompressedPrivateKeyLabel,
-      addressLabel, uncompressedAddressLabel, publicKeyLabel };
+      addressLabel, uncompressedAddressLabel, publicKeyLabel, uncompressedPublicKeyLabel };
     JTextField[] textfields = new JTextField[] { privateKeyField, uncompressedPrivateKeyField,
-      addressTextField, uncompressedAddressTextField, publicKeyTextField};
+      addressTextField, uncompressedAddressTextField, publicKeyTextField, uncompressedPublicKeyTextField };
 
     for (JLabel label : labels) {
       label.setHorizontalAlignment(JTextField.RIGHT);
@@ -183,6 +203,9 @@ public class KeyConversionPanel extends JPanel {
   public void updatePublicKey (String newPublicKey) {
     updateTextFieldWithValue(publicKeyTextField, newPublicKey);
   }
+  public void updateUncompressedPublicKey (String newUncompressedPublicKey) {
+    updateTextFieldWithValue(uncompressedPublicKeyTextField, newUncompressedPublicKey);
+  }
 
   private void uncompressedPrivateKeyChanged () {
     if (controller != null && !preventEvents) {
@@ -207,6 +230,11 @@ public class KeyConversionPanel extends JPanel {
   private void publicKeyChanged () {
     if (controller != null && !preventEvents) {
       controller.publicKeyChanged(publicKeyTextField.getText());
+    }
+  }
+  private void uncompressedPublicKeyChanged () {
+    if (controller != null && !preventEvents) {
+      controller.uncompressedPublicKeyChanged(uncompressedPublicKeyTextField.getText());
     }
   }
 

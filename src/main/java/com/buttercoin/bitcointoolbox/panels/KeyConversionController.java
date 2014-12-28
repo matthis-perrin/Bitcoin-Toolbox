@@ -50,9 +50,11 @@ public class KeyConversionController {
     String address = compressedKey.toAddress(MainNetParams.get()).toString();
     String uncompressedAddress = uncompressedKey.toAddress(MainNetParams.get()).toString();
     String publicKey = Utils.HEX.encode(compressedKey.getPubKey());
+    String uncompressedPublicKey = Utils.HEX.encode(uncompressedKey.getPubKey());
     view.updateAddress(address);
     view.updateUncompressedAddress(uncompressedAddress);
     view.updatePublicKey(publicKey);
+    view.updateUncompressedPublicKey(uncompressedPublicKey);
   }
 
   public void privateKeyChanged (String newPrivateKey) {
@@ -91,6 +93,15 @@ public class KeyConversionController {
 
   public void publicKeyChanged (String newPublicKey) {
     ECKey key = ECKeyStore.publicKeys.get(newPublicKey);
+    if (key == null) {
+      // Do something smart
+    } else {
+      updateModel(key);
+    }
+  }
+
+  public void uncompressedPublicKeyChanged (String newUncompressedPublicKey) {
+    ECKey key = ECKeyStore.uncompressedPublicKeys.get(newUncompressedPublicKey);
     if (key == null) {
       // Do something smart
     } else {
